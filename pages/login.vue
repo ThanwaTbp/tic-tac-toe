@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { useAuthStore } from "@/store/auth"
 
+useHead({
+	title: "เข้าสู่ระบบ",
+})
+
 const username = ref("thanwa")
 const password = ref("password")
 const authStore = useAuthStore()

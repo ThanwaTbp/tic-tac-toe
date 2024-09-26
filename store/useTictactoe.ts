@@ -2,7 +2,7 @@ export const useTicTacToeStore = defineStore("tictactoe", {
 	state: () => ({
 		board: Array(9).fill(null),
 		currentPlayer: "X",
-		winner: null,
+		winner: null as "X" | "O" | "draw" | null,
 		xScroll: 0,
 		oScroll: 0,
 		xScrollBonus: 0,
@@ -58,8 +58,10 @@ export const useTicTacToeStore = defineStore("tictactoe", {
 		checkScroll() {
 			// ตรวจสอบถ้าผู้ชนะคือ "X"
 			if (this.winner === "X") {
-				this.xScrollCount++ // เพิ่มคะแนนให้ X
-				this.oScrollCount-- // ลดคะแนนให้ O
+				this.xScrollCount++
+				if (this.oScroll > 0) {
+					this.oScrollCount--
+				}
 
 				// ถ้า X ชนะต่อเนื่อง 3 ครั้ง จะได้รับโบนัส 1 คะแนน
 				if (this.xWinStreak === 2) {
@@ -73,12 +75,14 @@ export const useTicTacToeStore = defineStore("tictactoe", {
 				this.oWinStreak = 0 // รีเซ็ตสถิติชนะต่อเนื่องของ O เพราะ O แพ้
 
 				this.xScroll = this.xScrollCount + this.xScrollBonus // คำนวณคะแนนของ X รวมโบนัส
-				this.oScroll = this.oScrollCount // คำนวณคะแนนของ O
+				this.oScroll = this.oScrollCount + this.oScrollBonus // คำนวณคะแนนของ O
 
 				// ตรวจสอบถ้าผู้ชนะคือ "O"
 			} else if (this.winner === "O") {
-				this.oScrollCount++ // เพิ่มคะแนนให้ O
-				this.xScrollCount-- // ลดคะแนนให้ X (เพราะ X แพ้)
+				this.oScrollCount++
+				if (this.xScroll > 0) {
+					this.xScrollCount--
+				}
 
 				// ถ้า O ชนะต่อเนื่อง 3 ครั้ง จะได้รับโบนัส 1 คะแนน
 				if (this.oWinStreak === 2) {
@@ -92,7 +96,7 @@ export const useTicTacToeStore = defineStore("tictactoe", {
 				this.xWinStreak = 0 // รีเซ็ตสถิติชนะต่อเนื่องของ X เพราะ X แพ้
 
 				this.oScroll = this.oScrollCount + this.oScrollBonus // คำนวณคะแนนของ O รวมโบนัส
-				this.xScroll = this.xScrollCount // คำนวณคะแนนของ X
+				this.xScroll = this.xScrollCount + this.xScrollBonus // คำนวณคะแนนของ X
 			}
 		},
 

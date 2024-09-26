@@ -6,6 +6,10 @@ definePageMeta({
 	middleware: "auth",
 })
 
+useHead({
+	title: "TicTacToe",
+})
+
 const store = useTicTacToeStore()
 const authStore = useAuthStore()
 
@@ -14,16 +18,33 @@ const logout = () => {
 }
 
 const handleMove = (index: any) => {
-	store.makeMove(index)
+	if (store.winner !== null) {
+		return
+	} else {
+		store.makeMove(index)
+	}
 	store.checkScroll()
 }
 </script>
 
 <template>
+	<div class="absolute top-2 left-2">
+		<div class="flex flex-col">
+			<span>User = X</span>
+			<span>ai = O</span>
+		</div>
+	</div>
 	<div class="absolute top-2 right-2">
 		<button v-if="authStore.token" class="btn btn-error" @click="logout">ออกจากระบบ</button>
 	</div>
 	<div class="game">
+		<div v-if="store.winner" class="mb-5">
+			<p v-if="store.winner === 'draw'" class="text-5xl">It's a draw!</p>
+			<p v-else class="text-5xl">
+				<span :class="store.winner === 'X' ? 'text-primary' : 'text-error'">{{ store.winner }}</span> ชนะ !
+			</p>
+			<button class="btn btn-primary mt-3" @click="store.playAgain">เล่นใหม่อีกครั้ง</button>
+		</div>
 		<div class="flex justify-center gap-20">
 			<h2>
 				คะแนนของ X : <span class="text-3xl text-primary font-bold">{{ store.xScroll }}</span>
@@ -38,11 +59,6 @@ const handleMove = (index: any) => {
 			</div>
 		</div>
 		<button class="btn btn-info" @click="store.resetBoard">รีเซ็ทกระดาน</button>
-		<div v-if="store.winner" class="mt-5">
-			<p v-if="store.winner === 'draw'">It's a draw!</p>
-			<p v-else>{{ store.winner }} wins!</p>
-			<button class="btn btn-primary" @click="store.playAgain">เล่นใหม่อีกครั้ง</button>
-		</div>
 	</div>
 </template>
 
